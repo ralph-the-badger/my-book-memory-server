@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const http = require("http");
 const path = require("path");
 const helmet = require("helmet");
 const cors = require("cors");
@@ -28,12 +29,28 @@ app.use(bodyParser.json());
 app.use(
   cors({
     origin: "http://localhost:5173",
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader("Authorization", "Bearer");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE"
+  );
+  next();
+});
+
 app.use(authRoutes);
 app.use("/app", userRoutes);
-app.use("/app", bookRoutes);
+app.use(bookRoutes);
+// app.use("/app", bookRoutes);
 
 const port = process.env.PORT || 5000;
 
