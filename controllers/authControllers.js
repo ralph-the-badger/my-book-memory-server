@@ -11,11 +11,18 @@ exports.getLogin = async (req, res) => {
   console.log(req);
 };
 
+const createToken = function (id) {
+  return jwt.sign({ id }, process.env.TOKEN_PRIVATE_KEY, { expiresIn: "6h" });
+};
+
 exports.postLogin = async (req, res) => {
   const { email, password } = req.body;
   const { error } = req;
   if (error) {
     return res.status(400).send(error);
+  }
+  if (!email || !password) {
+    throw new Error("Bitte füllen Sie jedes Feld aus.");
   }
   try {
     if ((email, password)) {
@@ -34,17 +41,18 @@ exports.postLogin = async (req, res) => {
           "Die Angaben stimmen nicht überein! Bitte überprüfen Sie Ihre Angaben oder registrieren sich."
         );
 
-      let token;
-      token = jwt.sign(
-        { userId: userExists.id, name: userExists.name },
-        process.env.TOKEN_PRIVATE_KEY,
-        { expiresIn: "6h" }
-      );
+      // let token;
+      // token = jwt.sign(
+      //   { userId: userExists.id, name: userExists.name },
+      //   process.env.TOKEN_PRIVATE_KEY,
+      //   { expiresIn: "6h" }
+      // );
+      const token = createToken(userExists.id);
 
       const validatedUser = {
         id: userExists.id,
-        name: userExists.name,
         email: userExists.email,
+        name: userExists.name,
         token,
       };
 
@@ -65,9 +73,13 @@ exports.postRegister = async (req, res) => {
   if (error) {
     return res.status(400).send(error);
   }
+  if (!name || !email || !password) {
+    throw new Error("Bitte füllen Sie jedes Feld aus.");
+  }
   try {
     if ((name, email, password)) {
-      let hashedPassword = await bcrypt.hash(password, 12);
+      const salt = await bcrypt.genSalt(12);
+      let hashedPassword = await bcrypt.hash(password, salt);
 
       const newUser = await new User({
         name: name,
@@ -85,12 +97,14 @@ exports.postRegister = async (req, res) => {
 
       const createdUser = await newUser.save();
 
-      let token;
-      token = jwt.sign(
-        { userId: createdUser.id, name: createdUser.name },
-        process.env.TOKEN_PRIVATE_KEY,
-        { expiresIn: "6h" }
-      );
+      // let token;
+      // token = jwt.sign(
+      //   { userId: createdUser.id, name: createdUser.name },
+      //   process.env.TOKEN_PRIVATE_KEY,
+      //   { expiresIn: "6h" }
+      // );
+
+      const token = createToken(createdUser.id);
 
       const savedUser = {
         id: createdUser.id,
