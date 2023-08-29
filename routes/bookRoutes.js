@@ -1,6 +1,34 @@
 const express = require("express");
+const path = require("path");
 const bookControllers = require("../controllers/bookControllers");
+const { createBookValidation } = require("../helpers/validation");
 const checkAuth = require("../middleware/check-auth");
+const multer = require("multer");
+
+const date = new Date(Date.now());
+const splittedDate = String(date.toLocaleDateString("de-DE"))
+  .split("T")[0]
+  .split(".");
+const year = splittedDate[2];
+const month =
+  splittedDate[1].length === 1 ? `0${splittedDate[1]}` : splittedDate[1];
+const day =
+  splittedDate[0].length === 1 ? `0${splittedDate[0]}` : splittedDate[0];
+const constructedDate = `${year}-${month}-${day}_`;
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images/");
+  },
+  filename: (req, file, cb) => {
+    // cb(null, constructedDate + file.originalname);
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+});
 
 const router = express.Router();
 
@@ -12,6 +40,12 @@ router.get("/book/:id", bookControllers.getBookById);
 router.use(checkAuth);
 
 router.get("/books", bookControllers.getAllBooks);
-router.post("/books", bookControllers.postCreateBook);
+
+router.post(
+  "/books/add",
+  upload.single("image"),
+  createBookValidation,
+  bookControllers.postCreateBook
+);
 
 module.exports = router;
