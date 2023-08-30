@@ -17,6 +17,7 @@ module.exports = async (req, res, next) => {
     // get Bearer token
     const token = req.headers.authorization.split(" ")[1];
     if (!token) {
+      res.redirect("/login");
       throw new Error("Die Authentifizierung ist fehlgeschlagen.");
     }
     const { id } = jwt.verify(token, process.env.TOKEN_PRIVATE_KEY);

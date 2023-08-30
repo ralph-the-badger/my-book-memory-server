@@ -54,12 +54,12 @@ exports.postCreateBook = async function (req, res) {
     image = req.file.filename;
   }
 
-  const authorsArray = authors.split("<br>").map((author, i) => ({
+  const authorsArray = authors.split("|").map((author, i) => ({
     id: i,
     author,
   }));
 
-  const contentArray = content.split("<br>").map((paragraph, i) => ({
+  const contentArray = content.split("|").map((paragraph, i) => ({
     id: i,
     paragraph,
   }));
