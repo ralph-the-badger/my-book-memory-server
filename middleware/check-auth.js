@@ -23,6 +23,7 @@ module.exports = async (req, res, next) => {
     const { id } = jwt.verify(token, process.env.TOKEN_PRIVATE_KEY);
 
     req.userId = await User.findOne({ _id: id }).select("_id");
+
     next();
   } catch (e) {
     return next(e);

@@ -81,26 +81,36 @@ module.exports.loginUserValidation = loginUserValidation;
 
 function createBookValidation(req, res, next) {
   const schema = Joi.object({
-    title: Joi.string().alphanum().min(3).max(255).required().messages({
+    title: Joi.string().min(3).max(255).required().messages({
       "string.base": "Der Buchtitel muss ein Text-Format haben.",
-      "string.alphanum":
-        "Bitte verwenden Sie ausschließlich Buchstaben und Zahlen (keine Sonderzeichen).",
       "string.min": "Das Passwort muss mindestens 3 Zeichen haben.",
       "string.max": "Das Passwort darf maximal 255 Zeichen haben.",
       "string.required": "Der Buchtitel ist ein Pflichtfeld",
     }),
-    authors: Joi.array().min(3).max(255).required().messages({
+    subtitle: Joi.string().allow("", null).messages({
+      "string.base": "Der Autor muss ein Text-Format haben.",
+    }),
+    authors: Joi.string().min(3).max(255).required().messages({
       "string.base": "Der Autor muss ein Text-Format haben.",
       "string.min": "Das Passwort muss mindestens 3 Zeichen haben.",
       "string.max": "Das Passwort darf maximal 255 Zeichen haben.",
       "string.required": "Der Buchtitel ist ein Pflichtfeld",
     }),
-    genre: Joi.string(),
-    published: Joi.date(),
-    image: Joi.string(),
-    filename: Joi.string(),
-    content: Joi.string().regex(/^[|,. a-z0-9]+$/),
-    myRating: Joi.number(),
+    genre: Joi.string().allow("", null).messages({
+      "string.base": "Das Genre muss ein Text-Format haben.",
+    }),
+    published: Joi.date().allow("", null),
+    image: Joi.string().messages({
+      "string.base": "Der Autor muss ein Text-Format haben.",
+    }),
+    filename: Joi.string().allow("", null).messages({
+      "string.base": "Der Dateiname muss ein Text-Format haben.",
+    }),
+    content: Joi.string().allow("", null).messages({
+      "string.base":
+        "Der Content darf ausschließlich im Text-Format abgespeichert werden. HTML ist nicht erlaubt.",
+    }),
+    myRating: Joi.number().allow("", null),
   });
   // schema options
   const options = {
@@ -112,6 +122,7 @@ function createBookValidation(req, res, next) {
   // validate request body against schema
   const { error, value } = schema.validate(req.body, options);
   if (error) {
+    console.log(error);
     const errorArray = error.details.map((e) => e.message);
     req.error = errorArray;
     next();

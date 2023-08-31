@@ -1,24 +1,6 @@
 // const express = require("express");
 const Book = require("../models/book");
 
-const books = [
-  {
-    id: 1,
-    name: "Der Herr der Ringe - Die Gefährten",
-    author: "J. R. R. Tolkien",
-  },
-  {
-    id: 2,
-    name: "Der Herr der Ringe - Die zwei Türme",
-    author: "J. R. R. Tolkien",
-  },
-  {
-    id: 3,
-    name: "Der Herr der Ringe - Die Rückkehr des Königs",
-    author: "J. R. R. Tolkien",
-  },
-];
-
 exports.getAllBooks = async (req, res) => {
   const user_id = req.userId._id;
   if (!user_id) {
@@ -33,12 +15,18 @@ exports.getAllBooks = async (req, res) => {
 };
 
 exports.getBookById = async function (req, res) {
-  console.log(req);
-  //   try {
-  //     await res.send({ user: users[1] });
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
+  const bookId = req.params.id;
+  const user_id = req.userId._id;
+
+  if (!user_id) {
+    throw new Error("Bitte stellen Sie sicher, dass Sie angemeldet sind.");
+  }
+  try {
+    const book = await Book.find({ _id: bookId, user_id });
+    await res.send({ book });
+  } catch (e) {
+    res.status(400).send([e.message]);
+  }
 };
 
 exports.postCreateBook = async function (req, res) {
@@ -88,8 +76,8 @@ exports.postCreateBook = async function (req, res) {
         "Die Buch-Informationen konnten nicht verarbeitet werden."
       );
 
-    const titleExists = await Book.findOne({ title });
-    if (titleExists) throw new Error("Dieser Buchtitel existiert bereits.");
+    // const titleExists = await Book.findOne({ title });
+    // if (titleExists) throw new Error("Dieser Buchtitel existiert bereits.");
 
     await newBook.save();
     res.status(200).send(book);

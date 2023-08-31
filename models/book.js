@@ -1,10 +1,13 @@
 const mongoose = require("mongoose");
 
+const bookId = new mongoose.Types.ObjectId();
+
 const bookSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
-    authors: { type: Array, required: true },
-    genre: { type: String },
+    title: { type: String, required: true, unique: false },
+    subtitle: { type: String },
+    authors: { type: Array, required: true, unique: false },
+    genre: { type: String, unique: false },
     published: { type: Date, default: Date.now },
     image: { type: String },
     content: { type: Array },
