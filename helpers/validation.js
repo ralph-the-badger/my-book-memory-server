@@ -80,6 +80,7 @@ function loginUserValidation(req, res, next) {
 module.exports.loginUserValidation = loginUserValidation;
 
 function createBookValidation(req, res, next) {
+  console.log("req - validation" + req.title);
   const schema = Joi.object({
     title: Joi.string().min(3).max(255).required().messages({
       "string.base": "Der Buchtitel muss ein Text-Format haben.",
@@ -120,6 +121,7 @@ function createBookValidation(req, res, next) {
   };
 
   // validate request body against schema
+
   const { error, value } = schema.validate(req.body, options);
   if (error) {
     console.log(error);

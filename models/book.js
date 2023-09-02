@@ -10,6 +10,7 @@ const bookSchema = new mongoose.Schema(
     genre: { type: String, unique: false },
     published: { type: Date, default: Date.now },
     image: { type: String },
+    File: { type: Object },
     content: { type: Array },
     myRating: { type: Number },
     user_id: { type: String },

@@ -19,25 +19,27 @@ app.use(helmet());
 // import { fileURLToPath } from "url";
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
-express.static(path.join(__dirname, "/public"));
+// express.static(path.join(__dirname, "/my-book-memory-server/public/images"));
+express.static(path.join(__dirname, "/public/images"));
+// express.static(path.join(__dirname, "/public"));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   res.setHeader("Authorization", "Bearer");
   res.setHeader(
