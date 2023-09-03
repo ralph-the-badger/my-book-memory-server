@@ -68,16 +68,22 @@ exports.postLogin = async (req, res) => {
 // };
 
 exports.postRegister = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { accessCode, name, email, password } = req.body;
   const { error } = req;
   if (error) {
     return res.status(400).send(error);
+  }
+  if (!accessCode) {
+    throw new Error("Sie benötigen einen Freigabe-Code.");
+  }
+  if (accessCode !== process.env.ACCESS_CODE) {
+    throw new Error("Der eingegebene Freigabe-Code ist nicht gültig.");
   }
   if (!name || !email || !password) {
     throw new Error("Bitte füllen Sie jedes Feld aus.");
   }
   try {
-    if ((name, email, password)) {
+    if ((accessCode, name, email, password)) {
       const salt = await bcrypt.genSalt(12);
       let hashedPassword = await bcrypt.hash(password, salt);
 

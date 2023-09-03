@@ -45,6 +45,13 @@ exports.postCreateBook = async function (req, res) {
     File = req.file;
   }
 
+  if (!title || title === "") {
+    throw new Error("Bitte geben Sie einen Titel an.");
+  }
+  if (!authors || authors === "" || authors.length === 0) {
+    throw new Error("Bitte geben Sie einen Autor an.");
+  }
+
   const authorsArray = authors.split("|").map((author, i) => ({
     id: i,
     author,
@@ -54,9 +61,6 @@ exports.postCreateBook = async function (req, res) {
     id: i,
     paragraph,
   }));
-
-  console.log(authorsArray);
-  console.log(contentArray);
 
   const book = {
     title,
@@ -70,15 +74,8 @@ exports.postCreateBook = async function (req, res) {
     File,
   };
 
-  if (!title) {
-    throw new Error("Bitte geben Sie einen Titel an.");
-  }
-  if (!authors) {
-    throw new Error("Bitte geben Sie einen Autor an.");
-  }
   try {
     const newBook = await new Book(book);
-    console.log(newBook);
     if (!newBook)
       throw new Error(
         "Die Buch-Informationen konnten nicht verarbeitet werden."
@@ -103,10 +100,10 @@ exports.udpateBookById = async function (req, res) {
   const { bookId, title, subtitle, authors, published, content, genre } =
     req.body;
 
-  if (!title) {
+  if (!title || title === "") {
     throw new Error("Bitte geben Sie einen Titel an.");
   }
-  if (!authors) {
+  if (!authors || authors === "" || authors.length === 0) {
     throw new Error("Bitte geben Sie einen Autor an.");
   }
 
@@ -119,9 +116,6 @@ exports.udpateBookById = async function (req, res) {
     id: i,
     paragraph,
   }));
-
-  console.log(authorsArray);
-  console.log(contentArray);
 
   try {
     const book = {
@@ -139,6 +133,25 @@ exports.udpateBookById = async function (req, res) {
       throw new Error("Das Bucht kannte nicht angepasst werden.");
     res.status(200).send(existingBook);
   } catch (e) {
+    console.log(e);
     res.status(400).send([e.message]);
+  }
+};
+
+exports.deleteBookById = async function (req, res) {
+  const user_id = req.userId._id;
+  const id = req.params.id;
+  if (!user_id) {
+    throw new Error("Bitte stellen Sie sicher, dass Sie angemeldet sind.");
+  }
+  try {
+    const book = await Book.findOneAndDelete({ _id: id });
+
+    if (!book) {
+      throw new Error("Das Buch konnte leider nicht identifiziert werden.");
+    }
+    res.status(200).send("Das Buch wurde gelöscht.");
+  } catch (e) {
+    return res.status(400).send(e);
   }
 };

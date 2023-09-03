@@ -28,4 +28,10 @@ router.post(
   bookControllers.udpateBookById
 );
 
+router.delete(
+  "/books/:id",
+  // createBookValidation,
+  bookControllers.deleteBookById
+);
+
 module.exports = router;

@@ -2,6 +2,11 @@ const Joi = require("joi");
 
 function registerUserValidation(req, res, next) {
   const schema = Joi.object({
+    accessCode: Joi.string().required().messages({
+      "string.empty": "Sie benötigen einen validen Freigabe-Code.",
+      "string.base": "Der Freigabe-Code muss ein Text-Format haben.",
+      "string.required": "Der Freigabe-Code ist ein Pflichtfeld",
+    }),
     name: Joi.string().required().messages({
       "string.base": "Der Name muss ein Text-Format haben.",
       "string.empty": "Bitte geben Sie einen Benutzernamen an.",
@@ -80,29 +85,30 @@ function loginUserValidation(req, res, next) {
 module.exports.loginUserValidation = loginUserValidation;
 
 function createBookValidation(req, res, next) {
-  console.log("req - validation" + req.title);
   const schema = Joi.object({
     title: Joi.string().min(3).max(255).required().messages({
+      "string.empty": "Es muss ein Buchtitel angegeben werden.",
       "string.base": "Der Buchtitel muss ein Text-Format haben.",
       "string.min": "Das Passwort muss mindestens 3 Zeichen haben.",
       "string.max": "Das Passwort darf maximal 255 Zeichen haben.",
       "string.required": "Der Buchtitel ist ein Pflichtfeld",
     }),
     subtitle: Joi.string().allow("", null).messages({
-      "string.base": "Der Autor muss ein Text-Format haben.",
+      "string.base": "Der Untertitel muss ein Text-Format haben.",
     }),
     authors: Joi.string().min(3).max(255).required().messages({
+      "string.empty": "Es muss mindestens ein Autor angegeben werden.",
       "string.base": "Der Autor muss ein Text-Format haben.",
-      "string.min": "Das Passwort muss mindestens 3 Zeichen haben.",
-      "string.max": "Das Passwort darf maximal 255 Zeichen haben.",
-      "string.required": "Der Buchtitel ist ein Pflichtfeld",
+      "string.min": "Der Autor muss mindestens 3 Zeichen haben.",
+      "string.max": "Der Autor darf maximal 255 Zeichen haben.",
+      "string.required": "Der Buchtitel ist ein Pflichtfeld.",
     }),
     genre: Joi.string().allow("", null).messages({
       "string.base": "Das Genre muss ein Text-Format haben.",
     }),
     published: Joi.date().allow("", null),
     image: Joi.string().messages({
-      "string.base": "Der Autor muss ein Text-Format haben.",
+      "string.base": "Das Bild muss ein Text-Format haben.",
     }),
     filename: Joi.string().allow("", null).messages({
       "string.base": "Der Dateiname muss ein Text-Format haben.",
