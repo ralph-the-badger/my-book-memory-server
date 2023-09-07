@@ -17,10 +17,24 @@ module.exports = async (req, res, next) => {
     // get Bearer token
     const token = req.headers.authorization.split(" ")[1];
     if (!token) {
-      res.redirect("/login");
       throw new Error("Die Authentifizierung ist fehlgeschlagen.");
     }
-    const { id } = jwt.verify(token, process.env.TOKEN_PRIVATE_KEY);
+    const { id } = jwt.verify(
+      token,
+      process.env.TOKEN_PRIVATE_KEY,
+      (err, res) => {
+        if (err) {
+          // throw new Error(
+          //   "Die Session ist abgelaufen. Bitte melden Sie sich erneut an."
+          // );
+          return "token expired";
+        } else return res;
+      }
+    );
+
+    if (id === "token expired") {
+      return res.send({ status: "error", data: "token expired" });
+    }
 
     req.userId = await User.findOne({ _id: id }).select("_id");
 

@@ -7,12 +7,8 @@ const User = require("../models/user");
 
 dotenv.config({ path: "../config/.env" });
 
-exports.getLogin = async (req, res) => {
-  console.log(req);
-};
-
 const createToken = function (id) {
-  return jwt.sign({ id }, process.env.TOKEN_PRIVATE_KEY, { expiresIn: "6h" });
+  return jwt.sign({ id }, process.env.TOKEN_PRIVATE_KEY, { expiresIn: "12h" });
 };
 
 exports.postLogin = async (req, res) => {
@@ -41,12 +37,6 @@ exports.postLogin = async (req, res) => {
           "Die Angaben stimmen nicht überein! Bitte überprüfen Sie Ihre Angaben oder registrieren sich."
         );
 
-      // let token;
-      // token = jwt.sign(
-      //   { userId: userExists.id, name: userExists.name },
-      //   process.env.TOKEN_PRIVATE_KEY,
-      //   { expiresIn: "6h" }
-      // );
       const token = createToken(userExists.id);
 
       const validatedUser = {
@@ -62,10 +52,6 @@ exports.postLogin = async (req, res) => {
     res.status(400).send([e.message]);
   }
 };
-
-// exports.getRegister = async (req, res) => {
-//   console.log(req);
-// };
 
 exports.postRegister = async (req, res) => {
   const { accessCode, name, email, password } = req.body;
@@ -102,13 +88,6 @@ exports.postRegister = async (req, res) => {
       if (emailExists) throw new Error("Diese E-Mail existiert bereits!");
 
       const createdUser = await newUser.save();
-
-      // let token;
-      // token = jwt.sign(
-      //   { userId: createdUser.id, name: createdUser.name },
-      //   process.env.TOKEN_PRIVATE_KEY,
-      //   { expiresIn: "6h" }
-      // );
 
       const token = createToken(createdUser.id);
 

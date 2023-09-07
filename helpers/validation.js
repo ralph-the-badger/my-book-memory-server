@@ -130,7 +130,6 @@ function createBookValidation(req, res, next) {
 
   const { error, value } = schema.validate(req.body, options);
   if (error) {
-    console.log(error);
     const errorArray = error.details.map((e) => e.message);
     req.error = errorArray;
     next();

@@ -9,7 +9,6 @@ const router = express.Router();
 
 // not authenticated users should not be allowed to create a book entry.
 // therefore i create a middleware that prohibts access to routes below of middlerware
-
 router.use(checkAuth);
 
 router.get("/books/:id", bookControllers.getBookById);
