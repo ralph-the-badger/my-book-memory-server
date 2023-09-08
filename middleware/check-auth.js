@@ -9,8 +9,7 @@ module.exports = async (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) {
     return res.send({
-      error:
-        "Sie verfügen über keine Authorisierung. Bitte melden Sie sich an.",
+      error: "Du verfügst über keine Authorisierung. Bitte melde dich an.",
     });
   }
   try {
@@ -27,7 +26,7 @@ module.exports = async (req, res, next) => {
           // throw new Error(
           //   "Die Session ist abgelaufen. Bitte melden Sie sich erneut an."
           // );
-          return "token expired";
+          return "Der Token ist abgelaufen. Bitte melde dich erneut an.";
         } else return res;
       }
     );

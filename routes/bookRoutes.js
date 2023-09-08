@@ -1,7 +1,9 @@
 const express = require("express");
-const path = require("path");
 const bookControllers = require("../controllers/bookControllers");
-const { createBookValidation } = require("../helpers/validation");
+const {
+  createBookValidation,
+  updateBookValidation,
+} = require("../helpers/validation");
 const checkAuth = require("../middleware/check-auth");
 const imageUpload = require("../middleware/imageUpload");
 
@@ -23,14 +25,10 @@ router.post(
 
 router.post(
   "/books/edit",
-  // createBookValidation,
+  updateBookValidation,
   bookControllers.udpateBookById
 );
 
-router.delete(
-  "/books/:id",
-  // createBookValidation,
-  bookControllers.deleteBookById
-);
+router.delete("/books/:id", bookControllers.deleteBookById);
 
 module.exports = router;

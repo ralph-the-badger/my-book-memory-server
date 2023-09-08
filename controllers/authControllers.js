@@ -18,7 +18,7 @@ exports.postLogin = async (req, res) => {
     return res.status(400).send(error);
   }
   if (!email || !password) {
-    throw new Error("Bitte füllen Sie jedes Feld aus.");
+    throw new Error("Bitte fülle jedes Feld aus.");
   }
   try {
     if ((email, password)) {
@@ -26,7 +26,7 @@ exports.postLogin = async (req, res) => {
 
       if (!userExists)
         throw new Error(
-          "Dieser User ist nicht registriert! Bitte überprüfen Sie Ihre Angaben oder registrieren sich."
+          "Dieser User ist nicht registriert. Bitte überprüfe deine Angaben oder registriere dich."
         );
 
       let isValidPassword = false;
@@ -34,7 +34,7 @@ exports.postLogin = async (req, res) => {
 
       if (!isValidPassword)
         throw new Error(
-          "Die Angaben stimmen nicht überein! Bitte überprüfen Sie Ihre Angaben oder registrieren sich."
+          "Die Angaben stimmen nicht überein. Bitte überprüfe deine Angaben oder registriere dich."
         );
 
       const token = createToken(userExists.id);
@@ -60,13 +60,15 @@ exports.postRegister = async (req, res) => {
     return res.status(400).send(error);
   }
   if (!accessCode) {
-    throw new Error("Sie benötigen einen Freigabe-Code.");
+    throw new Error(
+      "Du benötigst einen Freigabe-Code. Diesen erhältst Du von Ralph Rösner."
+    );
   }
   if (accessCode !== process.env.ACCESS_CODE) {
     throw new Error("Der eingegebene Freigabe-Code ist nicht gültig.");
   }
   if (!name || !email || !password) {
-    throw new Error("Bitte füllen Sie jedes Feld aus.");
+    throw new Error("Bitte fülle jedes Feld aus.");
   }
   try {
     if ((accessCode, name, email, password)) {
@@ -79,13 +81,13 @@ exports.postRegister = async (req, res) => {
         password: hashedPassword,
       });
       if (!newUser)
-        throw new Error("User-Daten konnten nicht verarbeitet werden.");
+        throw new Error("Die User-Daten konnten nicht verarbeitet werden.");
 
       const nameExists = await User.findOne({ name });
-      if (nameExists) throw new Error("Dieser Benutzername existiert bereits!");
+      if (nameExists) throw new Error("Dieser Benutzername existiert bereits.");
 
       const emailExists = await User.findOne({ email });
-      if (emailExists) throw new Error("Diese E-Mail existiert bereits!");
+      if (emailExists) throw new Error("Diese E-Mail existiert bereits.");
 
       const createdUser = await newUser.save();
 
